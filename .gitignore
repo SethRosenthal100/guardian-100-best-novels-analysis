@@ -1,0 +1,30 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# OS
+.DS_Store
+
+# Local server log
+/tmp/web-server.log
+
+# Editor
+*.swp
+*~
+.vscode/
+.idea/
+
+# Claude harness session files
+.claude/
+
+# Old git history backup (kept locally as insurance, never tracked)
+.git-backup/
+
+# Internal handoff notes — not for public repo
+HANDOFF.md
+
+# Raw Guardian source files — copyright (parsed extract voters_full.json is kept)
+raw/main-list.html
+raw/app.js

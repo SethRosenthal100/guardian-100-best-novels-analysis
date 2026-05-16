@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Methodology & coding notes — Guardian's 100 best novels: gendered trends</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="essay-page">
+    <header class="essay-header">
+      <div class="signature-bar"></div>
+      <a class="back-link essay-back" href="index.html">&larr; back to the chart</a>
+      <h1>Methodology &amp; coding notes</h1>
+      <p class="subtitle">
+        How the data was assembled, what the codings mean, and where
+        the judgment calls live.
+      </p>
+    </header>
+
+    <section class="about">
+      <div class="about-content">
+
+        <h2>Methodology</h2>
+
+        <p>The dataset comes from parsing the embedded JavaScript in the
+        Guardian's interactive feature page (May 2026). Every voter's full
+        ranked top-10 is in that source, including books that didn't make
+        the top 100. The parser extracts (voter, book, rank, position,
+        commentary) tuples and pivots them into structured CSVs. The full
+        pipeline — build scripts, analysis code, interactive site — is in
+        <a href="https://github.com/SethRosenthal100/guardian-100-best-novels-analysis">the project's git repo</a>.</p>
+
+        <h3>Voter gender research</h3>
+
+        <p>Each of the 172 voters is coded for gender — F, M, NB, or
+        unknown. The coding was done in two passes. The first pass drew
+        on general knowledge of contemporary literary figures (most of
+        the voters are well-known novelists, critics, and Guardian
+        journalists). The second pass was a careful validation: every
+        voter was checked against an authoritative public source —
+        typically the lead paragraph of their Wikipedia entry, with
+        explicit attention to pronouns; failing that, their Guardian
+        author-profile page, publisher bio, or personal website. The
+        two-pass process caught three errors in the first-pass coding:
+        Guy Gunaratne (M → NB; he/they), Lucas Rijneveld (NB → M, per
+        his post-2022 use of he/him in English), and Olivia Laing
+        (F → NB; they/them per Wikipedia).</p>
+
+        <p><strong>Caveats about voter gender coding.</strong> Even with
+        a validation pass, this kind of coding has real failure modes;
+        the resulting CSV is an informed best reading, not ground truth:</p>
+
+        <ul>
+          <li>For lesser-known voters (a handful of Guardian staff and
+          early-career critics) there is no Wikipedia entry and no
+          publicly-stated pronoun usage that could be found. Coding for
+          these voters relied on contextual cues — bio photographs,
+          third-person references on publisher pages, named partners
+          or spouses — and was marked as <em>medium</em> confidence.
+          None of them stood out as ambiguous, but one or two could
+          be wrong.</li>
+          <li>The validation pass <em>is</em> a snapshot. A voter's
+          publicly-stated identity at the time of coding may not match
+          their identity today; pronouns and gender identity can change
+          over time. Lucas Rijneveld is the clearest example (NB in
+          2020, M-identified in English since 2022).</li>
+          <li>One voter — Sandra Newman — has publicly identified as
+          gender-nonbinary in interviews, but Wikipedia and her
+          publishers continue to use she/her. She is coded as F here
+          and flagged as a borderline case in the source CSV. A reader
+          could reasonably argue for NB instead.</li>
+          <li>Yael van der Wouden is intersex and discussed this in her
+          Women's Prize acceptance speech but accepts she/her pronouns
+          and publicly identifies as a woman; coded F.</li>
+        </ul>
+
+        <p>Net of these caveats, the voter-gender file represents a
+        sincere best effort, and the headline statistics about gendered
+        voting patterns are robust to plausible single-voter recoding —
+        no individual voter's gender determines the F-versus-M ballot
+        split.</p>
+
+        <p>Each book is coded along three axes:</p>
+
+        <ul>
+          <li><strong>Subject score</strong> (−3 = very male-coded subject
+          matter, +3 = very female-coded). The most subjective code in
+          the project. It combines protagonist gender, the
+          public-vs-domestic balance of the setting, the presence of
+          violence or war, and overall thematic concerns. Half-integer
+          values are used where a book sits between two integer
+          categories.</li>
+          <li><strong>Canonicity score</strong> (−3 = deep traditional
+          canon, +3 = recent diverse / expanded canon). Combines age of
+          the book with author identity. Pre-1900 Western male authors
+          anchor the canonical end; recent post-colonial or trans/queer
+          voices anchor the idiosyncratic end.</li>
+          <li><strong>Publication year</strong> — objective, looked up.</li>
+        </ul>
+
+        <p>Authors are also coded for gender, separately from voters.
+        479 distinct authors across the dataset are coded (75 for the
+        top 100; 404 for the additional authors that appear only in
+        long-tail picks). Authors who use pen names (George Eliot,
+        George Orwell, Elena Ferrante) are coded as the gender the
+        author publicly identified as.</p>
+
+        <p>For the chart's binary F-vs-M math, the two non-binary voters
+        are excluded from the denominator and from the marginal curves.
+        They appear normally in voter lists and rankings — they just
+        don't enter the percentage math. The Y-axis label notes this with
+        "% of book's F/M voters".</p>
+
+        <h3>Reading the four headline statistics</h3>
+
+        <p>The four percentages at the top of the main page are
+        <em>parallel asymmetry measures</em>, not complementary halves
+        of a single whole. Each is computed against its own group's
+        total ballots:</p>
+
+        <ul>
+          <li>"27% of male voters' ballots go to female authors" has
+          all male-voter ballots in the denominator (684 ballots).</li>
+          <li>"49% of female voters' ballots go to male authors" has
+          all female-voter ballots in the denominator (1,003 ballots).</li>
+        </ul>
+
+        <p>The two stats describe each gender's cross-the-line voting
+        behaviour independently. Adding them together (27% + 49% = 76%)
+        is not meaningful — they're different bases. Within each voter
+        gender the complements <em>do</em> sum to 100% as expected
+        (male voters: 27% to F authors + 73% to M authors = 100%;
+        female voters: 49% to M authors + 51% to F authors = 100%).
+        The same logic applies to the two subject-coded statistics.</p>
+
+        <h2>Coding assumptions and limitations</h2>
+
+        <p>Most of the codings in this analysis are judgment calls, and
+        they are open to reasonable disagreement. It's worth being frank
+        about which ones.</p>
+
+        <p><strong>Subject score is the most subjective code.</strong>
+        It compresses several distinct features of a book — protagonist
+        gender, setting, themes, violence, narrative voice — into a
+        single number on a stereotype gradient. The same book could
+        legitimately be coded ±1 in either direction depending on which
+        features you weight most. Some specific examples of the judgment
+        calls made:</p>
+
+        <ul>
+          <li><strong>Wolf Hall</strong> (−0.5): Cromwell at Tudor court
+          is male-coded subject matter, but Hilary Mantel's intimate
+          close-third prose technique — the famous "He, Cromwell" — sits
+          in a stylistic lineage closer to Virginia Woolf than to Bernard
+          Cornwell. The score was pulled from −1 to −0.5 to reflect that
+          the prose reads less male than the plot summary.</li>
+          <li><strong>Anna Karenina</strong> (+1.5): Anna's marriage
+          tragedy is the title plot, but Konstantin Levin's farm-life is
+          structurally equal in page-count. Half-step.</li>
+          <li><strong>Pride and Prejudice</strong> (+3): A pure Regency
+          marriage plot. Unambiguously at the top of the female-coded
+          scale.</li>
+          <li><strong>Beloved</strong> (+2): Motherhood, slavery, ghost
+          of an infant daughter; female protagonist; domestic setting;
+          slavery's violence keeps it from +3.</li>
+          <li><strong>Catch-22</strong> (−3): WWII bomber squadron,
+          all-male crew, absurdist war. Maximum male-coded.</li>
+          <li><strong>The Vegetarian</strong> (+2.5): Yeong-hye refusing
+          meat; body horror centered on a woman; family interpersonal
+          violence. Female-coded but the family-violence element keeps
+          it from +3.</li>
+          <li><strong>Moby-Dick</strong> (−3): All-male whaling crew,
+          obsession, sea. Maximum male-coded.</li>
+        </ul>
+
+        <p><strong>Canonicity score</strong> is similarly judgment-based.
+        It conflates two correlated factors — age and author identity —
+        into a single number, which works for most books on this list but
+        breaks down for cases like Anita Brookner (canonically venerated
+        but not in the deep canon) or Toni Morrison (very canonical now
+        but the canon adopted her relatively recently). Each book's
+        canonicity score reflects where the book currently sits in the
+        literary establishment's received wisdom, which is not identical
+        to how venerated it was at publication.</p>
+
+        <p><strong>The long-tail subject coding was done by a research
+        agent</strong> working from plot summaries and brief author
+        research — not as carefully as the top-100 codings, which were
+        hand-done with individual rationale per book. Coding consistency
+        across the long tail is therefore weaker than within the top 100.
+        For the <em>headline patterns</em> this matters less (the signal
+        at the top of the list dominates), but for any individual
+        long-tail book, the score should be taken as approximate rather
+        than precise.</p>
+
+        <p><strong>Author gender for the 404 new authors was also
+        agent-coded.</strong> Famous and confidently-known authors are
+        reliable; obscure single-name authors with no clear public gender
+        are coded as "unknown" rather than guessed.</p>
+
+        <p><strong>The "voter pool" is the Guardian's curated list of
+        contributors</strong>, not a random sample of readers. The
+        patterns here describe the gendered reading habits of a specific
+        community of literary professionals — novelists, critics,
+        academics, Guardian journalists. Generalising to "what men read"
+        or "what women read" outside this community would overreach. The
+        voter pool is also 59% female, which itself shapes which books
+        aggregate to the top 100 and which fall out as honourable-mentions.</p>
+
+        <p style="margin-top: 32px"><a href="index.html">&larr; back to the chart</a></p>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "eb1c3f1b0498454eb35ef73174f068f9"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

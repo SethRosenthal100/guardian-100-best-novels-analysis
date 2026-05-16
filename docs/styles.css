@@ -1,0 +1,612 @@
+/* Palette — ports econ_style.py to CSS variables.
+   Variable names "--red" / "--blue" are kept for code stability, but they
+   now map to FEMALE (terracotta) and MALE (teal) respectively. The
+   editorial signature bar is --signature. */
+:root {
+  --signature: #E3120B;   /* editorial signature bar only */
+  --red:       #B85A3A;   /* FEMALE series — terracotta */
+  --red-soft:  #e0b7a5;
+  --blue:      #2A6F7C;   /* MALE series — teal */
+  --blue-soft: #a6c5cc;
+  --ink:       #121212;
+  --mid:       #5A5A5A;
+  --grid:      #D7D7D5;
+  --bg:        #F2F2EE;
+  --panel-bg:  #ffffff;
+  --dim-alpha: 0.18;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 28px 48px;
+}
+
+.chart-pane { min-width: 0; }
+
+.signature-bar {
+  width: 28px; height: 7px;
+  background: var(--signature);
+  margin-bottom: 12px;
+}
+
+h1 {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: var(--ink);
+}
+
+.subtitle {
+  font-size: 14.5px;
+  color: var(--mid);
+  margin: 0 0 14px 0;
+  line-height: 1.45;
+}
+
+/* Two headline stats sitting between the subtitle and the controls.
+   Quiet — plain text, no box, slightly emphasised numbers in colour. */
+.headline-stats {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.headline-stats li {
+  font-size: 13.5px;
+  color: var(--mid);
+  line-height: 1.4;
+}
+.headline-stats em {
+  font-style: italic;
+  color: var(--ink);
+}
+.headline-stats .stat-num {
+  font-size: 14.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  padding-right: 2px;
+}
+.headline-stats .stat-m { color: var(--blue); }   /* male */
+.headline-stats .stat-f { color: var(--red); }    /* female */
+
+/* Controls row above the chart: scope, axis, highlighted group */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px 28px;
+  margin: 0 0 24px 0;
+  align-items: flex-end;
+}
+.control-group { display: flex; flex-direction: column; gap: 5px; }
+.control-label {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mid);
+  font-weight: 600;
+}
+
+.mode-toggle, .axis-toggle {
+  display: inline-flex;
+  border: 1px solid var(--grid);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--panel-bg);
+}
+.mode-btn, .axis-btn {
+  background: transparent;
+  border: none;
+  padding: 7px 14px;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: var(--mid);
+  cursor: pointer;
+  border-right: 1px solid var(--grid);
+}
+.mode-btn:last-child, .axis-btn:last-child { border-right: none; }
+.mode-btn:hover, .axis-btn:hover { color: var(--ink); }
+.mode-btn[aria-selected="true"], .axis-btn[aria-selected="true"] {
+  background: var(--ink);
+  color: #fff;
+  font-weight: 500;
+}
+
+.group-select {
+  font-family: inherit;
+  font-size: 13.5px;
+  padding: 7px 10px;
+  border: 1px solid var(--grid);
+  background: var(--panel-bg);
+  color: var(--ink);
+  border-radius: 4px;
+  min-width: 160px;
+  cursor: pointer;
+}
+
+/* Lead-in between the controls and the chart itself */
+.chart-intro {
+  margin: 8px 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--grid);
+}
+.chart-intro-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--ink);
+}
+.chart-intro-sub {
+  font-size: 14px;
+  color: var(--mid);
+  margin: 0;
+  line-height: 1.5;
+}
+.chart-intro-sub strong { color: var(--ink); font-weight: 600; }
+
+#chart {
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+}
+
+.source {
+  font-size: 11.5px;
+  color: var(--mid);
+  font-style: italic;
+  margin: 20px 0 0 0;
+  line-height: 1.45;
+}
+
+/* Sidebar */
+.sidebar {
+  background: var(--panel-bg);
+  border-radius: 4px;
+  padding: 22px 22px 28px;
+  min-height: 500px;
+  align-self: start;
+  position: sticky;
+  top: 24px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+}
+
+.panel-section {
+  margin-bottom: 18px;
+}
+
+.panel-kicker {
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--mid);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.panel-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.25;
+  margin: 0;
+}
+
+.panel-author {
+  font-size: 15px;
+  color: var(--mid);
+  margin: 2px 0 8px;
+}
+
+.panel-meta {
+  font-size: 13px;
+  color: var(--mid);
+}
+.panel-meta strong { color: var(--ink); }
+
+.panel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.panel-list li {
+  padding: 7px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+.panel-list li:hover {
+  background: var(--bg);
+}
+.panel-list .marker {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  flex: 0 0 9px;
+}
+.panel-list .marker.M { background: var(--blue); }
+.panel-list .marker.F { background: var(--red); }
+.panel-list .marker.NB { background: var(--mid); }
+.panel-list .marker.unknown { background: var(--grid); }
+.panel-list .secondary {
+  color: var(--mid);
+  font-size: 12.5px;
+  margin-left: auto;
+}
+
+/* Tab bar for the overview sidebar */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--grid);
+  margin: 22px 0 16px;
+}
+.tab {
+  background: none;
+  border: none;
+  padding: 8px 14px 7px;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: var(--mid);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 120ms;
+}
+.tab:hover { color: var(--ink); }
+.tab.active {
+  color: var(--ink);
+  border-bottom-color: var(--signature);
+  font-weight: 600;
+}
+.tab-panel[hidden] { display: none; }
+
+/* Voter rankings — compact blocks for the overview sidebar */
+.ranking-block { margin-bottom: 18px; }
+.ranking-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 2px;
+}
+.ranking-blurb {
+  font-size: 11.5px;
+  color: var(--mid);
+  font-style: italic;
+  margin: 0 0 5px;
+  line-height: 1.35;
+}
+.panel-list--compact li {
+  padding: 4px 6px;
+  font-size: 12.5px;
+  gap: 8px;
+}
+.panel-list--compact .secondary {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Per-voter profile metrics */
+.metrics-list {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+}
+.metrics-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--grid);
+}
+.metrics-list li:last-child { border-bottom: none; }
+.metric-key { color: var(--mid); }
+.metric-val {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+/* Compact ranked-list variant used in the overview sidebar */
+.panel-list--ranked li {
+  display: grid;
+  grid-template-columns: 26px 12px 1fr;
+  grid-template-rows: auto auto;
+  gap: 2px 8px;
+  padding: 6px 6px 7px;
+  align-items: center;
+}
+.panel-list--ranked .rank-num {
+  grid-row: 1 / span 2;
+  font-variant-numeric: tabular-nums;
+  color: var(--mid);
+  font-size: 12px;
+  text-align: right;
+  font-weight: 500;
+}
+.panel-list--ranked .marker {
+  grid-row: 1 / span 2;
+  width: 8px; height: 8px; flex: none;
+}
+.panel-list--ranked .book-title {
+  grid-column: 3 / 4;
+  grid-row: 1 / 2;
+  font-size: 13.5px;
+  color: var(--ink);
+  line-height: 1.25;
+}
+.panel-list--ranked .secondary {
+  grid-column: 3 / 4;
+  grid-row: 2 / 3;
+  margin-left: 0;
+  font-size: 11.5px;
+  color: var(--mid);
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--mid);
+  cursor: pointer;
+  text-decoration: none;
+}
+.back-link:hover { color: var(--red); }
+
+/* Overview helper text */
+.overview-intro {
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.5;
+}
+.overview-intro p { margin: 0 0 10px; }
+.overview-intro .hint {
+  font-size: 13px;
+  color: var(--mid);
+  font-style: italic;
+  margin-top: 16px;
+}
+.overview-intro .legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--mid);
+}
+.overview-intro .legend span {
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.overview-intro .legend .dot {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+.overview-intro .legend .dot.F { background: var(--red); }
+.overview-intro .legend .dot.M { background: var(--blue); }
+
+/* Tooltip */
+.tooltip {
+  position: fixed;
+  pointer-events: none;
+  background: var(--ink);
+  color: #fff;
+  font-size: 12.5px;
+  padding: 7px 10px;
+  border-radius: 3px;
+  line-height: 1.35;
+  max-width: 220px;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+.tooltip .tt-title { font-weight: 600; }
+.tooltip .tt-author { color: #cfcfcf; font-size: 12px; }
+.tooltip .tt-meta { color: #9c9c9c; font-size: 11.5px; margin-top: 3px; }
+
+/* Chart SVG styling */
+#chart .dot {
+  cursor: pointer;
+  transition: opacity 120ms;
+}
+#chart .dot.dim { opacity: var(--dim-alpha); }
+#chart .dot.focus,
+#chart .dot.highlight { opacity: 1; }
+#chart .dot.focus { stroke: var(--ink); stroke-width: 2; }
+
+#chart .background-hit {
+  fill: transparent;
+  cursor: default;
+}
+
+#chart text {
+  font-family: inherit;
+  fill: var(--ink);
+}
+#chart .axis-label {
+  font-size: 14.5px;
+  font-weight: 500;
+  fill: var(--ink);
+}
+#chart .axis-sub {
+  font-size: 12.5px;
+  fill: #3a3a3a;
+  font-style: italic;
+}
+#chart .y-tick {
+  font-size: 12px;
+  fill: #2c2c2c;
+}
+#chart .ref-line {
+  stroke: var(--mid);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+  opacity: 0.6;
+}
+#chart .empty-region {
+  fill: var(--mid);
+  opacity: 0.04;
+}
+#chart .empty-region-label {
+  font-size: 13px;
+  fill: #2c2c2c;
+  font-style: italic;
+}
+/* curves: highlighted group (teal/red) + the pooled "other" group (grey) */
+#chart .curve-highlighted { stroke: var(--red); fill: none; stroke-width: 2.4; }
+#chart .curve-other       { stroke: var(--mid); fill: none; stroke-width: 1.6; opacity: 0.7; }
+#chart .curve-label {
+  font-size: 13.5px;
+  font-style: italic;
+  font-weight: 500;
+}
+#chart .curve-label.hl     { fill: var(--red); }
+#chart .curve-label.other  { fill: #2c2c2c; }
+/* Near-miss dots: dashed border to distinguish */
+#chart .dot.near-miss { stroke-dasharray: 2 1.5; }
+#chart .baseline-text {
+  font-size: 13px;
+  fill: #2c2c2c;
+  font-style: italic;
+}
+
+/* Label badges for selected dots */
+#chart .label-bg {
+  fill: var(--bg);
+  opacity: 0.92;
+  rx: 2; ry: 2;
+}
+#chart .label-text {
+  font-size: 13.5px;
+  fill: var(--ink);
+  font-style: italic;
+}
+/* Seed labels in the overview state: same shape, visually de-emphasised
+   so they don't compete with the data when the user is exploring */
+#chart .label-muted .label-text {
+  fill: #444;
+  font-size: 12.5px;
+}
+
+@media (max-width: 900px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    position: static;
+    max-height: none;
+  }
+}
+
+/* About-this-project section — body-text below the chart+sidebar grid */
+.about {
+  border-top: 1px solid var(--grid);
+  background: var(--bg);
+  padding: 48px 0 96px;
+}
+.about-content {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 28px;
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+.about-content h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 44px 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--grid);
+  color: var(--ink);
+}
+.about-content h2:first-of-type {
+  margin-top: 0;
+}
+.about-content p {
+  margin: 0 0 18px;
+}
+.about-content strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.about-content em {
+  font-style: italic;
+}
+.about-content ul {
+  margin: 16px 0 24px;
+  padding-left: 24px;
+}
+.about-content li {
+  margin-bottom: 12px;
+}
+.about-content a {
+  color: var(--signature);
+  text-decoration: underline;
+  text-decoration-color: rgba(0,0,0,0.15);
+}
+.about-content a:hover {
+  text-decoration-color: var(--signature);
+}
+.about-content .placeholder {
+  background: var(--panel-bg);
+  padding: 18px 22px;
+  border-left: 3px solid var(--signature);
+  color: var(--mid);
+  font-size: 17px;
+}
+.about-content .signature {
+  font-style: italic;
+  color: var(--mid);
+  margin-top: 24px;
+  text-align: right;
+  font-size: 16px;
+}
+.about-content h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 32px 0 12px;
+  color: var(--ink);
+}
+.methodology-link {
+  background: var(--panel-bg);
+  padding: 18px 22px;
+  border-left: 3px solid var(--mid);
+  font-size: 17px;
+  margin-top: 32px;
+}
+
+/* Stand-alone essay page (methodology.html) — same header style as main,
+   but no chart layout below. */
+.essay-page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.essay-header {
+  padding: 32px 28px 24px;
+  max-width: 760px;
+}
+.essay-back {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--mid);
+  margin-bottom: 14px;
+}
+.essay-back:hover { color: var(--signature); }

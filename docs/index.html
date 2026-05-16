@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Who votes for whom — Guardian's 100 best novels: gendered trends</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page">
+    <main class="chart-pane">
+      <header>
+        <div class="signature-bar"></div>
+        <h1>Who votes for whom on the Guardian's 100 best novels: gendered trends</h1>
+        <p class="subtitle">
+          Female voters cast ballots across the whole subject gradient;<br>
+          male voters cluster in a narrow band of male-coded modernist titles.
+        </p>
+        <ul class="headline-stats">
+          <li><span class="stat-num stat-m">27%</span> of <em>male</em> voters' ballots go to <em>female</em> authors</li>
+          <li><span class="stat-num stat-f">49%</span> of <em>female</em> voters' ballots go to <em>male</em> authors</li>
+          <li><span class="stat-num stat-m">33%</span> of <em>male</em> voters' ballots go to <em>female-coded</em> books</li>
+          <li><span class="stat-num stat-f">43%</span> of <em>female</em> voters' ballots go to <em>male-coded</em> books</li>
+        </ul>
+        <div class="controls">
+          <div class="control-group">
+            <label class="control-label">Scope</label>
+            <div class="mode-toggle" role="tablist">
+              <button class="mode-btn" data-mode="top100" role="tab" aria-selected="true">Top 100 books</button>
+              <button class="mode-btn" data-mode="all" role="tab" aria-selected="false">All <span id="mode-all-count">694</span> books</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="chart-intro">
+        <h2 class="chart-intro-title">All books plotted by gendered votes against stereotypical male/female subject category</h2>
+        <p class="chart-intro-sub">
+          <strong>Click any dot</strong> to see who voted for that book.
+          <strong>Click a voter's name</strong> to see what else they picked.
+        </p>
+      </div>
+
+      <svg id="chart" role="img" aria-label="Interactive scatter of the Guardian's 100 best novels"></svg>
+
+      <p class="source">
+        Source: Guardian, &lsquo;The 100 best novels of all time&rsquo; (May 2026). 962 ballots from 170 voters.
+        Subject score: analyst&rsquo;s hand-coded &minus;3 to +3 holistic measure.
+      </p>
+    </main>
+
+    <aside class="sidebar" id="sidebar">
+      <div id="panel-content"></div>
+    </aside>
+  </div>
+
+  <section class="about">
+    <div class="about-content">
+
+      <h2 id="about-project">About this project</h2>
+
+      <p>I immediately clicked on Wolf Hall when I saw it in the
+      Guardian's list of the 100 best novels, to see who had voted for
+      it. It is the book I would choose for number one. I was amazed to
+      see that everyone who voted for it was a woman. Sad, but true,
+      like WTF! This made me very curious about who voted for whom and
+      if there were obvious gender trends in the voting. I used Claude
+      AI to analyze all of the data from the Guardian's list and to
+      make this visualization. It is useful in a few different ways.
+      First, it is a good way to find books. You can navigate from
+      books that you like to voters who selected them and then to the
+      other books that those voters also chose. Just click around in
+      the graph or in the lists. Second, it shows very clear gender
+      trends in the voting. Men tend to vote for male authors.</p>
+
+      <p>I looked at the 'gender' of books two ways. First, what
+      percentage of ballots are for the opposite gender (non-binary
+      voters are in all of the lists and rankings but not in these
+      male/female statistics). Second, I thought maybe some books
+      would be more stereotypically 'male' or 'female' and that might
+      drive voting preferences differently from the author's gender.
+      Maybe male voters just prefer 'male' books, you know, spies,
+      war, mayhem, exuberant misogyny and all the rest. I certainly
+      love and admire lots of those books. Maybe women just don't
+      write as many books like that. So, I had Claude code all of
+      the books as more male or more female using stereotypical,
+      subjective interpretations (including subject matter and aspects
+      of writing style).</p>
+
+      <p>It turns out that coding the books as male/female shifts the
+      results a few points, but men's preference for male authors
+      easily trumps their preference for male-coded subjects.</p>
+
+      <p>Some of the coolest results are in the voter rankings. I have
+      ranked voters by consensus vs contrarian, most idiosyncratic vs
+      most canonical taste, and those who vote most against the
+      overall gender pattern. These rankings also switch around in
+      interesting ways when you include all 700 or so books vs. just
+      the top 100.</p>
+
+      <p>I wrote this introduction old school, typing in a text
+      editor. The rest was written and programmed by Claude. Knowing
+      a tiny bit about how LLMs work, I suspect there is a good chance
+      this entire analysis is completely, fraudulently wrong. But, it
+      is wonderfully plausible which is all we really can get in the
+      post-truth reality.</p>
+
+      <p class="signature">— Seth Rosenthal</p>
+
+      <h2>What the data shows</h2>
+
+      <p>The Guardian's <em>100 best novels of all time</em> (May 2026) was
+      assembled from the top-10 ballots of 172 contributors — novelists,
+      critics, academics, and Guardian journalists. That's 1,720 ballots in
+      total, across <strong>694 distinct books picked at least once</strong>.
+      The published top 100 is the consensus filter; the 594 honourable-mentions
+      form a long tail of personal favourites.</p>
+
+      <p>The headline pattern is gendered <em>asymmetry</em>, but not the
+      asymmetry you might expect from the canon being male-dominated. Female
+      voters cast their ballots across the whole subject-matter gradient.
+      They pick the male-coded canon (Moby-Dick, Brothers Karamazov, the
+      modernists) and the female-coded canon (Austen, the Brontës, Morrison,
+      Atwood) in roughly equal measure. Their voting distribution is
+      <strong>bimodal</strong> — two near-equal peaks, one in male-coded
+      territory and one in female-coded territory. Male voters, by contrast,
+      cluster narrowly: their distribution is <strong>unimodal</strong>, a
+      single peak around mildly male-coded modernist titles (Ulysses,
+      The Trial, Brothers Karamazov, Blood Meridian), and 70% of their
+      ballots go to male-authored books versus a 50/50 split for female
+      voters.</p>
+
+      <p>When the analysis is extended to all 694 books — including everyone's
+      personal favourites that didn't make the consensus top 100 — the
+      pattern <strong>strengthens</strong> rather than weakens. The male
+      voters' distribution sharpens into an even tighter single peak (the
+      secondary peak at +1.5 in top-100 mode disappears); the female bimodality
+      persists.</p>
+
+      <p>A surprising feature of the long tail: it doesn't <em>diversify</em>
+      the canon in the way the headline statistics might suggest. It is more
+      contemporary (median publication year 1973 vs 1937 for the top 100)
+      and less canonical (mean canonicity −0.33 vs −1.18), but it doesn't
+      really shift the gender mix among authors (38% female-authored in the
+      long tail vs 37% in the top 100), and its subject-matter mean is
+      actually <em>more</em> male-coded than the top 100 (−0.21 vs +0.23).
+      The long tail is dominated by <strong>mid-century male literary
+      canon</strong> — Bellow, Updike, Roth, Coetzee, Bernhard, Beckett,
+      Powell, DeLillo — that voters mention as personal favourites but that
+      didn't aggregate to the top 100. Contemporary diverse voices are
+      present in the long tail, but outnumbered by these male-literary
+      "honourable mentions."</p>
+
+      <p>The voter rankings shift in interesting ways when you switch from
+      top-100 mode to all-books mode. The two voters whose <em>entire</em>
+      top-10 ballots missed the cut — Natalie Haynes and Nussaibah Younis —
+      naturally dominate the "most contrarian" ranking in all-books mode
+      (they're invisible in top-100 mode). Mark Haddon's top-100 picks look
+      extremely canonical (mean canonicity −2.50); his full top-10 includes
+      enough recent work that his mean shifts to +0.60, a 3-point swing.
+      Nikesh Shukla's top-100 picks look strongly female-coded (+2.50);
+      his full top-10 is essentially gender-neutral (−0.05). These shifts
+      suggest that the picks which <em>aggregate</em> to the top 100 don't
+      always reflect each voter's full reading personality — the consensus
+      filter has its own bias toward female-coded literary fiction at the
+      "officially approved" end and male-coded modernism at the
+      "officially serious" end, with each voter's idiosyncrasies thinning
+      out under aggregation.</p>
+
+      <p class="methodology-link">
+        For a frank discussion of how the codings were done, the
+        assumptions made, and the specific judgment calls behind
+        individual books, see
+        <a href="methodology.html">Methodology &amp; coding notes</a>.
+      </p>
+
+      <p class="methodology-link">
+        <a href="https://github.com/SethRosenthal100/guardian-100-best-novels-analysis">View the source code &rarr;</a>
+      </p>
+
+    </div>
+  </section>
+
+  <div id="tooltip" class="tooltip" hidden></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="app.js"></script>
+
+  <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "eb1c3f1b0498454eb35ef73174f068f9"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
