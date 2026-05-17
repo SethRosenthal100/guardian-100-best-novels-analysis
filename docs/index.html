@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Who votes for whom — Guardian's 100 best novels: gendered trends</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
   <div class="page">
@@ -67,12 +67,16 @@
       <p class="footnote">
         * Each book&rsquo;s y-position shows the percentage of its voters who are
         female, calculated as F &divide; (F + M). The 2 non-binary voters are
-        excluded from this percentage but appear in voter lists and rankings
+        not in this percentage but appear in voter lists and rankings
         throughout the site.
       </p>
     </main>
 
     <aside class="sidebar" id="sidebar">
+      <div class="sidebar-search">
+        <input type="search" id="search-input" placeholder="Search books, authors, voters&hellip;" autocomplete="off">
+        <div id="search-results" hidden></div>
+      </div>
       <div id="panel-content"></div>
     </aside>
   </div>

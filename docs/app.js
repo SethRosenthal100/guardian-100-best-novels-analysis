@@ -30,6 +30,20 @@
   const data = await fetch("data_extended.json").then((r) => r.json());
   const booksByKey = new Map(data.books.map((b) => [b.key, b]));
   const votersById = new Map(data.voters.map((v) => [v.id, v]));
+
+  // Author -> sorted list of books; authorSlug -> author name (for hash routing)
+  const slugifyAuthor = (s) => s.toLowerCase().replace(/[^\w]+/g, "-").replace(/^-+|-+$/g, "");
+  const booksByAuthor = new Map();
+  for (const b of data.books) {
+    if (!b.author) continue;
+    if (!booksByAuthor.has(b.author)) booksByAuthor.set(b.author, []);
+    booksByAuthor.get(b.author).push(b);
+  }
+  for (const arr of booksByAuthor.values()) {
+    arr.sort((a, b) => (b.vote_count - a.vote_count) || a.title.localeCompare(b.title));
+  }
+  const authorBySlug = new Map();
+  for (const author of booksByAuthor.keys()) authorBySlug.set(slugifyAuthor(author), author);
   const axesByKey = new Map(data.axes.map((a) => [a.key, a]));
 
   // Update the "All N books" pill count to the actual distinct book count
@@ -438,6 +452,7 @@
     let h = "";
     if (nav.kind === "book") h = `#book/${nav.id}`;
     else if (nav.kind === "voter") h = `#voter/${nav.id}`;
+    else if (nav.kind === "author") h = `#author/${nav.id}`;
     if (window.location.hash !== h) {
       history.pushState(null, "", h || window.location.pathname);
     }
@@ -451,6 +466,9 @@
     } else if (h.startsWith("#voter/")) {
       const id = h.slice(7);
       if (votersById.has(id)) return { kind: "voter", id };
+    } else if (h.startsWith("#author/")) {
+      const slug = decodeURIComponent(h.slice(8));
+      if (authorBySlug.has(slug)) return { kind: "author", id: slug };
     }
     return { kind: "overview", id: null };
   }
@@ -487,6 +505,16 @@
         .filter((b) => b && rank_to_xy[b.key]);
       drawLabels(labelBooks);
       renderVoterPanel(voter);
+    } else if (nav.kind === "author") {
+      const author = authorBySlug.get(nav.id);
+      if (!author) { setNav({ kind: "overview", id: null }); return; }
+      const books = booksByAuthor.get(author) || [];
+      const bookKeys = new Set(books.map((b) => b.key));
+      gDots.selectAll("circle.dot")
+        .classed("dim", (d) => !bookKeys.has(d.key))
+        .classed("highlight", (d) => bookKeys.has(d.key));
+      drawLabels(books.filter((b) => rank_to_xy[b.key]));
+      renderAuthorPanel(author, books);
     } else {
       const seeds = SEED_LABEL_KEYS.map((k) => booksByKey.get(k)).filter(Boolean);
       drawLabels(seeds, { muted: true });
@@ -709,9 +737,9 @@
 
     const introCopy = isAll
       ? `<p><strong>All ${data.books.length} books</strong> picked by at least one voter — the top 100, plus 594 more that didn't make the cut. 172 voters each submitted a ranked top-10 (1,720 ballots total).</p>
-         <p class="hint">Note: the chart's binary F/M math excludes the 2 non-binary voters from denominator and curves; they still appear in voter lists and rankings.</p>`
+         <p class="hint">Note: the 2 non-binary voters are not in the chart's binary F/M math (denominator and curves); they still appear in voter lists and rankings.</p>`
       : `<p><strong>The chart</strong> places each novel at its subject-matter score (x-axis) versus the share of its F/M voters who are women (y-axis). Dot size shows how many voters chose it.</p>
-         <p class="hint">The 2 non-binary voters are excluded from the binary chart math but still appear in voter lists and rankings.</p>`;
+         <p class="hint">The 2 non-binary voters are not in the chart's binary F/M math but still appear in voter lists and rankings.</p>`;
 
     panel.innerHTML = `
       <div class="overview-intro">
@@ -782,7 +810,11 @@
       <div class="panel-section">
         <div class="panel-kicker">${book.in_top_100 ? `Rank #${book.rank}` : "Not in top 100"} &middot; ${book.vote_count} voters</div>
         <h2 class="panel-title">${escapeHtml(book.title)}</h2>
-        <p class="panel-author">by ${escapeHtml(book.author)} &middot;
+        <p class="panel-author">by ${
+          (booksByAuthor.get(book.author) || []).length > 1
+            ? `<a class="author-link" data-author="${slugifyAuthor(book.author)}">${escapeHtml(book.author)}</a>`
+            : escapeHtml(book.author)
+        } &middot;
           <span style="color: var(--${book.author_gender === 'F' ? 'red' : 'blue'})">
             ${book.author_gender === 'F' ? 'female author' : book.author_gender === 'M' ? 'male author' : 'author'}
           </span>
@@ -797,6 +829,38 @@
       <div class="panel-section">
         <div class="panel-kicker">Voters (${voters.length})</div>
         <ul class="panel-list">${voterItems}</ul>
+      </div>
+    `;
+    wirePanelClicks();
+  }
+
+  function renderAuthorPanel(author, books) {
+    const totalPicks = books.reduce((s, b) => s + b.vote_count, 0);
+    const gender = books[0]?.author_gender;
+    const items = books.map((b) => `
+      <li data-book="${b.key}">
+        <span class="marker ${b.author_gender}"></span>
+        <span class="book-title">${escapeHtml(b.title)}</span>
+        <span class="secondary">${b.vote_count} voter${b.vote_count === 1 ? '' : 's'}${b.in_top_100 ? ` &middot; #${b.rank}` : ''}</span>
+      </li>`).join("");
+
+    panel.innerHTML = `
+      <a class="back-link" data-action="overview">&larr; all books</a>
+      <div class="panel-section">
+        <div class="panel-kicker">Author</div>
+        <h2 class="panel-title">${escapeHtml(author)}</h2>
+        <p class="panel-meta" style="margin-top:6px">
+          <span style="color: var(--${gender === 'F' ? 'red' : gender === 'M' ? 'blue' : 'ink'})">
+            ${gender === 'F' ? 'female author' : gender === 'M' ? 'male author' : 'author'}</span>
+        </p>
+        <p class="panel-meta" style="margin-top:8px">
+          ${books.length} book${books.length === 1 ? '' : 's'} in this dataset
+          &middot; ${totalPicks} total pick${totalPicks === 1 ? '' : 's'}
+        </p>
+      </div>
+      <div class="panel-section">
+        <div class="panel-kicker">Books</div>
+        <ul class="panel-list panel-list--ranked">${items}</ul>
       </div>
     `;
     wirePanelClicks();
@@ -866,6 +930,9 @@
       const k = el.dataset.book;
       if (k) el.addEventListener("click", () => setNav({ kind: "book", id: k }));
     });
+    panel.querySelectorAll("[data-author]").forEach((el) => {
+      el.addEventListener("click", (e) => { e.preventDefault(); setNav({ kind: "author", id: el.dataset.author }); });
+    });
     panel.querySelectorAll('[data-action="overview"]').forEach((el) => {
       el.addEventListener("click", (e) => { e.preventDefault(); setNav({ kind: "overview", id: null }); });
     });
@@ -914,6 +981,115 @@
     renderChart();
     applyNav();
   }
+
+  // ---------------------------------------------------------------------
+  // Search
+  // ---------------------------------------------------------------------
+  const searchInput   = document.getElementById("search-input");
+  const searchResults = document.getElementById("search-results");
+
+  // Build a single corpus of {type, id, label, sublabel} entries.
+  const searchCorpus = [
+    ...data.books.map((b) => ({
+      type: "book", id: b.key, label: b.title, sublabel: b.author || ""
+    })),
+    ...Array.from(booksByAuthor.entries()).map(([author, bks]) => ({
+      type: "author", id: slugifyAuthor(author), label: author,
+      sublabel: `${bks.length} book${bks.length === 1 ? '' : 's'}`
+    })),
+    ...data.voters.map((v) => ({
+      type: "voter", id: v.id, label: v.name,
+      sublabel: v.gender === "F" ? "female" : v.gender === "M" ? "male" : "non-binary"
+    })),
+  ];
+
+  // Match scoring: exact > label-prefix > label-word-boundary > sublabel-prefix
+  // > sublabel-word-boundary > label-substring > sublabel-substring.
+  // Tie-break by type preference: author > book > voter.
+  const TYPE_PRIORITY = { author: 2, book: 1, voter: 0 };
+  function scoreMatch(label, sublabel, q) {
+    label = label.toLowerCase();
+    sublabel = (sublabel || "").toLowerCase();
+    if (label === q) return 100;
+    if (sublabel === q) return 80;
+    if (label.startsWith(q)) return 50;
+    if (sublabel.startsWith(q)) return 25;
+    const wb = new RegExp(`\\b${q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`);
+    if (wb.test(label)) return 30;
+    if (wb.test(sublabel)) return 12;
+    if (label.includes(q)) return 5;
+    if (sublabel.includes(q)) return 2;
+    return 0;
+  }
+
+  function runSearch() {
+    const q = searchInput.value.trim().toLowerCase();
+    if (!q) {
+      searchResults.hidden = true;
+      searchResults.innerHTML = "";
+      return;
+    }
+    const scored = [];
+    for (const it of searchCorpus) {
+      const s = scoreMatch(it.label, it.sublabel, q);
+      if (s > 0) scored.push({ ...it, score: s });
+    }
+    scored.sort((a, b) =>
+      (b.score - a.score) || (TYPE_PRIORITY[b.type] - TYPE_PRIORITY[a.type])
+    );
+
+    if (scored.length === 0) {
+      searchResults.innerHTML = `<div class="search-empty">No matches</div>`;
+      searchResults.hidden = false;
+      return;
+    }
+
+    const LIMIT = 15;
+    const visible = scored.slice(0, LIMIT);
+    const html = visible.map((it) =>
+      `<a class="search-result" href="#${it.type}/${escapeAttr(it.id)}" data-type="${it.type}" data-id="${escapeAttr(it.id)}">
+        <span class="search-result-type type-${it.type}">${it.type}</span>
+        <span class="search-result-main">
+          <span class="search-result-label">${escapeHtml(it.label)}</span>
+          <span class="search-result-sub">${escapeHtml(it.sublabel)}</span>
+        </span>
+      </a>`
+    ).join("");
+    const more = scored.length > LIMIT
+      ? `<div class="search-more">+${scored.length - LIMIT} more matches</div>` : "";
+    searchResults.innerHTML = html + more;
+    searchResults.hidden = false;
+    searchResults.querySelectorAll(".search-result").forEach((el) => {
+      el.addEventListener("click", (e) => {
+        // Plain left-click navigates internally and clears the search.
+        // Cmd/Ctrl-click, middle-click, etc. fall through to default
+        // browser behaviour (open in new tab), preserving link semantics.
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+        e.preventDefault();
+        setNav({ kind: el.dataset.type, id: el.dataset.id });
+        searchInput.value = "";
+        searchResults.hidden = true;
+        searchResults.innerHTML = "";
+      });
+    });
+  }
+
+  function escapeAttr(s) { return String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;"); }
+
+  searchInput.addEventListener("input", runSearch);
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      searchInput.value = "";
+      runSearch();
+      return;
+    }
+    if (e.key === "Enter") {
+      e.preventDefault();
+      // Results are sorted by relevance, so the top result is the best match.
+      const first = searchResults.querySelector(".search-result");
+      if (first) first.click();
+    }
+  });
 
   // ---------------------------------------------------------------------
   // Boot
