@@ -28,3 +28,7 @@ HANDOFF.md
 # Raw Guardian source files — copyright (parsed extract voters_full.json is kept)
 raw/main-list.html
 raw/app.js
+
+# Exploratory analysis (supply normalization) — not part of the published analysis
+normalize_curves_compare.py
+out/normalize_curves_compare.png
