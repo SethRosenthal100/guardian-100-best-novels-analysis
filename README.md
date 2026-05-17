@@ -8,11 +8,18 @@ Interactive analysis of voting patterns in The Guardian's *"100 best novels of a
 
 - `docs/` — the static interactive site (served by GitHub Pages)
 - `data/` — hand- and agent-coded CSVs: voter gender, author gender, book subject, canonicity
-- `out/` — generated static charts and analysis outputs
-- `analyze.py` — statistical analysis report (top-100 only)
+- `raw/voters_full.json` — the parsed Guardian ballot extract (172 voters &times; 10 ranked picks)
 - `build_extended_data.py` — joins all the CSVs into the single JSON blob the site loads
-- `extract_full_ballots.py` — parser that extracted ballot data from the Guardian's page
-- `signature_plot.py`, `author_gender_plot.py`, etc. — standalone static chart scripts
+- `extract_full_ballots.py` — parser that produced `voters_full.json` from the Guardian page
+
+## Reproducing the analysis
+
+```bash
+python3 build_extended_data.py              # regenerates docs/data_extended.json
+cd docs && python3 -m http.server 8000      # serves the site locally
+```
+
+Modify any `data/*.csv`, rerun `build_extended_data.py`, refresh the browser.
 
 ## Methodology
 
