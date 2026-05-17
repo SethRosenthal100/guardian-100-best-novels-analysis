@@ -25,6 +25,9 @@ __pycache__/
 # Internal handoff notes — not for public repo
 HANDOFF.md
 
+# Research / reference notes — kept locally, not published
+NOTES_research.md
+
 # Raw Guardian source files — copyright (parsed extract voters_full.json is kept)
 raw/main-list.html
 raw/app.js
