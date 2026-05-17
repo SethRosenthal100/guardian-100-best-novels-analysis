@@ -18,9 +18,9 @@
   // Layout
   // ---------------------------------------------------------------------
   const W = 980;
-  const H = 720;
-  const M = { top: 8, right: 30, bottom: 96, left: 64 };
-  const MARGINAL_H = 150;
+  const H = 780;
+  const M = { top: 8, right: 30, bottom: 96, left: 100 };
+  const MARGINAL_H = 210;
   const MAIN_TOP = M.top + MARGINAL_H;
   const MAIN_H = H - MAIN_TOP - M.bottom;
 
@@ -219,7 +219,7 @@
     const yOther = kde(otherSubjects, xsArr);
 
     const peak = Math.max(...yHi, ...yOther, 0.001);
-    const yKde = d3.scaleLinear().domain([0, peak * 1.55]).range([M.top + MARGINAL_H, M.top + 8]);
+    const yKde = d3.scaleLinear().domain([0, peak * 1.3]).range([M.top + MARGINAL_H, M.top + 8]);
 
     const line = d3.line().x((_, i) => x(xsArr[i])).y((d) => yKde(d));
 
@@ -313,22 +313,34 @@
       .attr("y", y(poolPct) - 5)
       .text(`voter pool baseline = ${poolPct.toFixed(0)}% ${groupLabel(highlighted)}`);
 
-    // y-axis ticks
+    // y-axis ticks: descriptive vertical endpoints + horizontal percentage mids.
     [0, 25, 50, 75, 100].forEach((t) => {
-      gMain.append("text")
-        .attr("class", "y-tick")
-        .attr("x", M.left - 8)
-        .attr("y", y(t))
-        .attr("text-anchor", "end")
-        .attr("dominant-baseline", "central")
-        .text(`${t}%`);
+      const isGenderEndpoint = view.axis === "gender" && (t === 0 || t === 100);
+      if (isGenderEndpoint) {
+        const labelText = t === 100 ? "All female" : "All male";
+        const anchor    = t === 100 ? "end" : "start";
+        gMain.append("text")
+          .attr("class", "axis-label")
+          .attr("transform", `translate(${M.left - 15}, ${y(t)}) rotate(-90)`)
+          .attr("text-anchor", anchor)
+          .attr("dominant-baseline", "central")
+          .text(labelText);
+      } else {
+        gMain.append("text")
+          .attr("class", "y-tick")
+          .attr("x", M.left - 8)
+          .attr("y", y(t))
+          .attr("text-anchor", "end")
+          .attr("dominant-baseline", "central")
+          .text(`${t}%`);
+      }
     });
     const yLabel = view.axis === "gender"
-      ? `% of book's F/M voters who are ${groupLabel(highlighted)}`
-      : `% of book's voters who are ${groupLabel(highlighted)}`;
+      ? `Voter gender*`
+      : `Percentage of voters for each book who are ${groupLabel(highlighted)}`;
     gMain.append("text")
-      .attr("class", "axis-sub")
-      .attr("transform", `translate(${M.left - 46}, ${MAIN_TOP + MAIN_H / 2}) rotate(-90)`)
+      .attr("class", "axis-title")
+      .attr("transform", `translate(${M.left - 75}, ${MAIN_TOP + MAIN_H / 2}) rotate(-90)`)
       .attr("text-anchor", "middle")
       .text(yLabel);
 
@@ -346,10 +358,10 @@
         .text(label);
     });
     gMain.append("text")
-      .attr("class", "axis-sub")
-      .attr("x", x(0)).attr("y", axisY + 18)
+      .attr("class", "axis-title")
+      .attr("x", x(0)).attr("y", axisY + 38)
       .attr("text-anchor", "middle")
-      .text("(hand-coded subject-matter, range −3 to +3)");
+      .text("Stereotypical categorization of books as male/female based on subject and style");
 
     // ---- dots ----
     rank_to_xy = {}; // refresh map
