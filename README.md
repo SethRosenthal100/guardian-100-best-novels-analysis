@@ -1,15 +1,15 @@
-# Guardian 100 best novels: gendered voting trends
+# Guardian 100 best novels: Voting patterns, trends, and structure
 
-Interactive analysis of voting patterns in The Guardian's *"100 best novels of all time"* feature (May 2026) — how 172 contributors' ballots split along gender lines, both in the **authors** they picked and in the **subjects** of the books they chose.
+Interactive analysis of voting patterns in The Guardian's *"100 best novels of all time"* feature (May 2026) — how 172 contributors' ballots form clusters of books, how the clusters reveal and contrast voting patterns, and how the votes reveal gender trends.
 
 **Live site:** https://sethrosenthal100.github.io/guardian-100-best-novels-analysis/
 
 ## Repo layout
 
 - `docs/` — the static interactive site (served by GitHub Pages)
-- `data/` — hand- and agent-coded CSVs: voter gender, author gender, book subject, canonicity
+- `data/` — coded CSVs: voter gender; author gender (top-100 authors and long-tail authors in separate files); subject and canonicity scores for the top 100; near-miss codings (books with 3+ voters that missed the top 100); long-tail subject codings (see methodology page for how the coding was done)
 - `raw/voters_full.json` — the parsed Guardian ballot extract (172 voters &times; 10 ranked picks)
-- `build_extended_data.py` — joins all the CSVs into the single JSON blob the site loads
+- `build_extended_data.py` — joins the CSVs and bakes cluster computation, layout, and rankings into the JSON blob the site loads
 - `extract_full_ballots.py` — parser that produced `voters_full.json` from the Guardian page
 
 ## Reproducing the analysis

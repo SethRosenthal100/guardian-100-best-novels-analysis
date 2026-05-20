@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Who votes for whom — Guardian's 100 best novels: gendered trends</title>
+  <title>Who votes for whom on the Guardian's 100 best novels</title>
   <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
@@ -11,65 +11,190 @@
     <main class="chart-pane">
       <header>
         <div class="signature-bar"></div>
-        <h1>Who votes for whom on the Guardian's 100 best novels: gendered trends</h1>
-        <p class="subtitle">
-          Female voters cast ballots across the whole subject gradient;<br>
-          male voters cluster in a narrow band of male-coded modernist titles.
-        </p>
-        <ul class="headline-stats">
-          <li><span class="stat-num stat-m">27%</span> of <em>male</em> voters' ballots go to <em>female</em> authors</li>
-          <li><span class="stat-num stat-f">49%</span> of <em>female</em> voters' ballots go to <em>male</em> authors</li>
-          <li><span class="stat-num stat-m">33%</span> of <em>male</em> voters' ballots go to <em>female-coded</em> books</li>
-          <li><span class="stat-num stat-f">43%</span> of <em>female</em> voters' ballots go to <em>male-coded</em> books</li>
-        </ul>
+        <h1>Who votes for whom on the Guardian's 100 best novels</h1>
+        <div class="page-intro">
+          <p>
+            Perplexity at the fact that only women voted for Wolf Hall led me to
+            analyze the data from the
+            <a href="https://www.theguardian.com/books/ng-interactive/2026/may/12/the-100-best-novels-of-all-time"
+               target="_blank" rel="noopener">Guardian&rsquo;s project</a>.
+            Here are a few different ways to look at the patterns and structures in the voting.
+            Even if the patterns aren&rsquo;t interesting, the interactive
+            navigation makes this a pretty cool way to track down new things to
+            read. You can start with books and voters you like and trace their
+            connections to find other books you might not know of.
+          </p>
+        </div>
+        <div class="tabs" role="tablist">
+          <button class="tab-btn active" data-tab="book-clusters"
+                  role="tab" aria-selected="true">Book Clusters</button>
+          <button class="tab-btn" data-tab="voter-clusters"
+                  role="tab" aria-selected="false">Voter Clusters</button>
+          <button class="tab-btn" data-tab="gender-trends"
+                  role="tab" aria-selected="false">Gender Trends</button>
+        </div>
       </header>
 
-      <div class="chart-lede">
-        <p>
-          <strong>73%</strong> of male voters' ballots go to male authors. But,
-          maybe men are voting for subject matter more than the gender of the
-          author. Maybe male-coded books by female authors get just as many votes.
-          Nice try, but no. Here's a detailed breakdown:
-        </p>
-      </div>
-
-      <div class="chart-intro">
-        <h2 class="chart-intro-title">All books plotted by gendered votes against stereotypical male/female subject category</h2>
-        <div class="controls">
-          <div class="control-group">
-            <label class="control-label">Scope</label>
-            <div class="mode-toggle" role="tablist">
-              <button class="mode-btn" data-mode="top100" role="tab" aria-selected="true">Top 100 books</button>
-              <button class="mode-btn" data-mode="all" role="tab" aria-selected="false">All <span id="mode-all-count">694</span> books</button>
+      <!-- ================== Tab 1: Book Clusters ================== -->
+      <section class="tab-panel" id="tab-book-clusters" data-tab="book-clusters"
+               role="tabpanel" aria-labelledby="tab-btn-book-clusters">
+        <div class="tab-explainer">
+          <p>
+            All books are grouped into clusters based on how they share voters.
+            For example, the large plum dots represent books that both got lots
+            of votes and also were chosen by a highly overlapping group of
+            voters. These clusters emerge purely from the voting connections.
+            They are not external categories. There is no &lsquo;canon
+            cluster&rsquo; or &lsquo;post-colonial cluster.&rsquo; But, if you
+            explore the cluster lists (you can get to them in the side panel
+            after selecting a book) you will see that some appear to fit into
+            coherent literary groupings, some have broad related attributes
+            (like high prestige), and others are just ad hoc grab bags connected
+            by a few overlapping ballots. Any coherence, if it exists, comes
+            from the voters and their collective choices, not from the process
+            of finding clusters.
+          </p>
+          <p>
+            Note the orphans. These books don&rsquo;t fit into clusters,
+            but they received enough votes to make it into the list.
+          </p>
+        </div>
+        <div class="chart-intro">
+          <div class="controls">
+            <div class="control-group">
+              <label class="control-label">Scope</label>
+              <div class="mode-toggle" role="tablist">
+                <button class="mode-btn" data-mode="top100" role="tab" aria-selected="true">Top 100 books</button>
+                <button class="mode-btn" data-mode="all" role="tab" aria-selected="false">All <span class="mode-all-count">694</span> books</button>
+              </div>
             </div>
           </div>
+          <p class="chart-intro-sub">
+            <strong>Click any book</strong> to see who voted for it.
+            <strong>Click a voter's name</strong> to highlight their picks.
+            In <em>Top 100</em> scope, the remaining books fade to gray.
+          </p>
         </div>
-        <div class="chart-key">
-          <span class="key-item"><span class="key-dot key-dot-f"></span> Books by <strong>female</strong> authors</span>
-          <span class="key-item"><span class="key-dot key-dot-m"></span> Books by <strong>male</strong> authors</span>
-          <span class="key-item">
-            <span class="key-size-pair"><span class="key-size-small"></span><span class="key-size-large"></span></span>
-            Dot size proportional to vote count
-          </span>
+        <svg id="chart-book-clusters" class="chart" role="img"
+             aria-label="Network of all books co-picked by Guardian voters,
+                         grouped into voter-discovered communities"></svg>
+      </section>
+
+      <!-- ================== Tab 2: Voter Clusters ================== -->
+      <section class="tab-panel hidden" id="tab-voter-clusters"
+               data-tab="voter-clusters" role="tabpanel"
+               aria-labelledby="tab-btn-voter-clusters">
+        <div class="tab-explainer">
+          <p>
+            The graph highlights different voting patterns that contrast how
+            the voters chose books. You can look for lumpers vs. splitters,
+            and canonistas vs. frontier explorers.
+          </p>
+          <p>
+            Voters each get 10 votes. In this graph, each voter is shown as a
+            spoke on the wheel. Each spoke has its votes sorted by the same
+            clusters that were derived for the book clusters.
+          </p>
+          <p>
+            The most concentrated votes are at the top and as you continue
+            clockwise the ballots get less concentrated (i.e., each of those
+            voters voted for books in more clusters). But concentrated is not
+            the same as conventional. Take note of Nussaibah Younis, who
+            defines her own cluster and none of whose books are in the top
+            100, and Saba Sams, who voted for books in 8 different clusters.
+          </p>
+          <p>
+            To the right, the major clusters are represented by pairs of
+            circles showing the number of books vs. the total votes for the
+            cluster. This shows how imbalanced the voting is. The top cluster
+            has 30 books and gets 463 votes, way tr&egrave;s canonical! The
+            next cluster has more than twice the books but only about one
+            third as many votes.
+          </p>
         </div>
-        <p class="chart-intro-sub">
-          <strong>Click any dot</strong> to see who voted for that book.
-          <strong>Click a voter's name</strong> to see what else they picked.
+        <div class="chart-intro">
+          <div class="controls">
+            <div class="control-group">
+              <label class="control-label">Scope</label>
+              <div class="mode-toggle" role="tablist">
+                <button class="mode-btn" data-mode="top100" role="tab" aria-selected="true">Top 100 books</button>
+                <button class="mode-btn" data-mode="all" role="tab" aria-selected="false">All <span class="mode-all-count">694</span> books</button>
+              </div>
+            </div>
+          </div>
+          <p class="chart-intro-sub">
+            <strong>Click a voter's spoke</strong> to see what they picked.
+            <strong>Click a cluster swatch</strong> to see the books in it.
+            In <em>Top 100</em> scope, picks that missed the cut turn gray.
+          </p>
+        </div>
+        <svg id="chart-voter-clusters" class="chart" role="img"
+             aria-label="Voter donut grouped by anchor cluster, with a small
+                         legend of the top clusters by total votes"></svg>
+      </section>
+
+      <!-- ================== Tab 3: Gender Trends ================== -->
+      <section class="tab-panel hidden" id="tab-gender-trends"
+               data-tab="gender-trends" role="tabpanel"
+               aria-labelledby="tab-btn-gender-trends">
+        <div class="tab-explainer">
+          <ul class="headline-stats">
+            <li><span class="stat-num stat-m">27%</span> of <em>male</em> voters' ballots go to <em>female</em> authors</li>
+            <li><span class="stat-num stat-f">49%</span> of <em>female</em> voters' ballots go to <em>male</em> authors</li>
+            <li><span class="stat-num stat-m">33%</span> of <em>male</em> voters' ballots go to <em>female-coded</em> books**</li>
+            <li><span class="stat-num stat-f">43%</span> of <em>female</em> voters' ballots go to <em>male-coded</em> books**</li>
+          </ul>
+          <p>
+            <strong>73%</strong> of male voters' ballots go to male authors. But,
+            maybe men are voting for subject matter more than the gender of the
+            author. Maybe male-coded books by female authors get just as many votes.
+            Nice try, but no. Here's a detailed breakdown:
+          </p>
+        </div>
+        <div class="chart-intro">
+          <h2 class="chart-intro-title">All books plotted by gendered votes against stereotypical male/female subject category</h2>
+          <div class="controls">
+            <div class="control-group">
+              <label class="control-label">Scope</label>
+              <div class="mode-toggle" role="tablist">
+                <button class="mode-btn" data-mode="top100" role="tab" aria-selected="true">Top 100 books</button>
+                <button class="mode-btn" data-mode="all" role="tab" aria-selected="false">All <span class="mode-all-count">694</span> books</button>
+              </div>
+            </div>
+          </div>
+          <div class="chart-key">
+            <span class="key-item"><span class="key-dot key-dot-f"></span> Books by <strong>female</strong> authors</span>
+            <span class="key-item"><span class="key-dot key-dot-m"></span> Books by <strong>male</strong> authors</span>
+            <span class="key-item">
+              <span class="key-size-pair"><span class="key-size-small"></span><span class="key-size-large"></span></span>
+              Dot size proportional to vote count
+            </span>
+          </div>
+          <p class="chart-intro-sub">
+            <strong>Click any dot</strong> to see who voted for that book.
+            <strong>Click a voter's name</strong> to see what else they picked.
+          </p>
+        </div>
+        <svg id="chart-gender-trends" class="chart" role="img"
+             aria-label="Interactive scatter of the Guardian's 100 best novels"></svg>
+        <p class="source">
+          Source: Guardian, &lsquo;The 100 best novels of all time&rsquo; (May 2026). 1,720 ballots from 172 voters.
+          Subject score: &minus;3 to +3 holistic measure (see methodology page).
         </p>
-      </div>
-
-      <svg id="chart" role="img" aria-label="Interactive scatter of the Guardian's 100 best novels"></svg>
-
-      <p class="source">
-        Source: Guardian, &lsquo;The 100 best novels of all time&rsquo; (May 2026). 962 ballots from 170 voters.
-        Subject score: analyst&rsquo;s hand-coded &minus;3 to +3 holistic measure.
-      </p>
-      <p class="footnote">
-        * Each book&rsquo;s y-position shows the percentage of its voters who are
-        female, calculated as F &divide; (F + M). The 2 non-binary voters are
-        not in this percentage but appear in voter lists and rankings
-        throughout the site.
-      </p>
+        <p class="footnote">
+          * Each book&rsquo;s y-position shows the percentage of its voters who are
+          female, calculated as F &divide; (F + M). The 2 non-binary voters are
+          not in this percentage but appear in voter lists and rankings
+          throughout the site.
+        </p>
+        <p class="footnote">
+          ** Subject-coded percentages count only picks where the book is
+          directionally coded male- or female-leaning. Neutral (subject = 0)
+          and uncoded books are excluded from both numerator and denominator
+          (614 male-voter picks and 929 female-voter picks). See methodology
+          for the full math.
+        </p>
+      </section>
     </main>
 
     <aside class="sidebar" id="sidebar">
@@ -87,122 +212,79 @@
       <h2 id="about-project">About this project</h2>
 
       <p>I immediately clicked on Wolf Hall when I saw it in the
-      Guardian's list of the 100 best novels, to see who had voted for
-      it. It is the book I would choose for number one. I was amazed to
-      see that everyone who voted for it was a woman. Sad, but true,
-      like WTF! This made me very curious about who voted for whom and
-      if there were obvious gender trends in the voting. I used Claude
-      AI to analyze all of the data from the Guardian's list and to
-      make this visualization. It is useful in a few different ways.
-      First, it is a good way to find books. You can navigate from
-      books that you like to voters who selected them and then to the
-      other books that those voters also chose. Just click around in
-      the graph or in the lists. Second, it shows very clear gender
-      trends in the voting. Men tend to vote for male authors.</p>
+      Guardian&rsquo;s list of the 100 best novels, to see who had
+      voted for it. It is the book I would choose for number one. I
+      was amazed to see that everyone who voted for it was a woman.
+      Sad, but true, like WTF! This made me very curious about who
+      voted for whom and if there were obvious gender trends in the
+      voting. I used Claude AI to analyze all of the data from the
+      Guardian&rsquo;s list and to make this visualization.</p>
 
-      <p>I looked at the 'gender' of books two ways. First, what
-      percentage of ballots are for the opposite gender (non-binary
-      voters are in all of the lists and rankings but not in these
-      male/female statistics). Second, I thought maybe some books
-      would be more stereotypically 'male' or 'female' and that might
-      drive voting preferences differently from the author's gender.
-      Maybe male voters just prefer 'male' books, you know, spies,
-      war, mayhem, exuberant misogyny and all the rest. I certainly
-      love and admire lots of those books. Maybe women just don't
-      write as many books like that. So, I had Claude code all of
-      the books as more male or more female using stereotypical,
-      subjective interpretations (including subject matter and aspects
-      of writing style).</p>
+      <p>This turns out to be a great way to find books. You can
+      navigate from books that you like to voters who selected them
+      and then to the other books that those voters also chose. Or
+      look at voter rankings to find interesting voters. Just click
+      around in the graphs or in the lists.</p>
+
+      <p>The book clusters and voter clusters are properties that
+      emerge directly from the data, how votes overlap (or don&rsquo;t)
+      leads to the clusters. The meaning of the clusters is up for
+      debate, but some certainly seem to have coherent identities
+      (maybe with some fuzzy edges) while others simply share an
+      audience for a grab bag of otherwise unrelated books.</p>
+
+      <p>The gender graph is an attempt to use external categories to
+      lump the data. It is interesting, but I&rsquo;m not sure it added
+      much to the obvious fact that men mostly voted for male authors.</p>
+
+      <p>I looked at the &lsquo;gender&rsquo; of books two ways.
+      First, what percentage of ballots are for the opposite gender
+      (non-binary voters are in all of the lists and rankings but not
+      in these male/female statistics). Second, I thought maybe some
+      books would be more stereotypically &lsquo;male&rsquo; or
+      &lsquo;female&rsquo; and that might drive voting preferences
+      differently from the author&rsquo;s gender. Maybe male voters
+      just prefer &lsquo;male&rsquo; books, you know, spies, war,
+      mayhem, exuberant misogyny and all the rest. I certainly love
+      and admire lots of those books. Maybe women just don&rsquo;t
+      write as many books like that. So, I had Claude code all of the
+      books as more male or more female using stereotypical, subjective
+      interpretations (including subject matter and aspects of writing
+      style).</p>
 
       <p>It turns out that coding the books as male/female shifts the
-      results a few points, but men's preference for male authors
+      results a few points, but men&rsquo;s preference for male authors
       easily trumps their preference for male-coded subjects.</p>
 
       <p>Some of the coolest results are in the voter rankings. I have
-      ranked voters by consensus vs contrarian, most idiosyncratic vs
-      most canonical taste, and those who vote most against the
-      overall gender pattern. These rankings also switch around in
-      interesting ways when you include all 700 or so books vs. just
-      the top 100.</p>
+      ranked voters by how clustered or diverse their ballots are, how
+      canonical or niche, how obscure or popular their choices are.
+      These rankings also switch around in interesting ways when you
+      include all 700 or so books vs. just the top 100.</p>
 
       <p>Nota bene, there are some tangled, intractable issues here.
-      There is a phantom false premise that haunts these kinds of
-      comparisons, the assumption that the universe of books to vote
-      for is not already skewed by gender. Obviously that's wrong.
-      It's a real garden of the forking paths. So the stats are
-      clear, these voters voted this way in this sample. But, the
-      ground is less solid than you might want for building a broader
-      analysis. The most important result, however, remains clear:
-      Hilary Mantel was robbed.</p>
+      There is a phantom premise that haunts these kinds of
+      comparisons, that the universe of books to vote for is not
+      already skewed by gender or other factors. Obviously
+      that&rsquo;s wrong. It&rsquo;s a real garden of forking
+      paths. So the stats are clear, these voters voted this way in
+      this sample. But, the ground is less solid than you might want
+      for building a broader analysis.</p>
 
-      <p>I wrote this introduction old school, typing in a text
-      editor. The rest was written and programmed by Claude. Knowing
-      a tiny bit about how LLMs work, I suspect there is a good chance
-      this entire analysis is completely, fraudulently wrong. But, it
-      is wonderfully plausible which is all we really can get in the
-      post-truth reality.</p>
+      <p>To be clear, I think that to get different lists of top books,
+      we just need to curate different collections of voters, not
+      expect anyone in particular to have different preferences. The
+      most important result, however, remains clear: Hilary Mantel was
+      robbed.</p>
+
+      <p>I wrote this introduction old school, typing in a text editor.
+      The rest was written and programmed by Claude. Knowing a tiny bit
+      about how LLMs work, I suspect there is a good chance this entire
+      analysis is completely, fraudulently wrong. But, it is wonderfully
+      plausible which is all we really can get in the post-truth
+      reality.</p>
 
       <p class="signature">— Seth Rosenthal</p>
-
-      <h2>What the data shows</h2>
-
-      <p>The Guardian's <em>100 best novels of all time</em> (May 2026) was
-      assembled from the top-10 ballots of 172 contributors — novelists,
-      critics, academics, and Guardian journalists. That's 1,720 ballots in
-      total, across <strong>694 distinct books picked at least once</strong>.
-      The published top 100 is the consensus filter; the 594 honourable-mentions
-      form a long tail of personal favourites.</p>
-
-      <p>The headline pattern is gendered <em>asymmetry</em>, but not the
-      asymmetry you might expect from the canon being male-dominated. Female
-      voters cast their ballots across the whole subject-matter gradient.
-      They pick the male-coded canon (Moby-Dick, Brothers Karamazov, the
-      modernists) and the female-coded canon (Austen, the Brontës, Morrison,
-      Atwood) in roughly equal measure. Their voting distribution is
-      <strong>bimodal</strong> — two near-equal peaks, one in male-coded
-      territory and one in female-coded territory. Male voters, by contrast,
-      cluster narrowly: their distribution is <strong>unimodal</strong>, a
-      single peak around mildly male-coded modernist titles (Ulysses,
-      The Trial, Brothers Karamazov, Blood Meridian), and 70% of their
-      ballots go to male-authored books versus a 50/50 split for female
-      voters.</p>
-
-      <p>When the analysis is extended to all 694 books — including everyone's
-      personal favourites that didn't make the consensus top 100 — the
-      pattern <strong>strengthens</strong> rather than weakens. The male
-      voters' distribution sharpens into an even tighter single peak (the
-      secondary peak at +1.5 in top-100 mode disappears); the female bimodality
-      persists.</p>
-
-      <p>A surprising feature of the long tail: it doesn't <em>diversify</em>
-      the canon in the way the headline statistics might suggest. It is more
-      contemporary (median publication year 1973 vs 1937 for the top 100)
-      and less canonical (mean canonicity −0.33 vs −1.18), but it doesn't
-      really shift the gender mix among authors (38% female-authored in the
-      long tail vs 37% in the top 100), and its subject-matter mean is
-      actually <em>more</em> male-coded than the top 100 (−0.21 vs +0.23).
-      The long tail is dominated by <strong>mid-century male literary
-      canon</strong> — Bellow, Updike, Roth, Coetzee, Bernhard, Beckett,
-      Powell, DeLillo — that voters mention as personal favourites but that
-      didn't aggregate to the top 100. Contemporary diverse voices are
-      present in the long tail, but outnumbered by these male-literary
-      "honourable mentions."</p>
-
-      <p>The voter rankings shift in interesting ways when you switch from
-      top-100 mode to all-books mode. The two voters whose <em>entire</em>
-      top-10 ballots missed the cut — Natalie Haynes and Nussaibah Younis —
-      naturally dominate the "most contrarian" ranking in all-books mode
-      (they're invisible in top-100 mode). Mark Haddon's top-100 picks look
-      extremely canonical (mean canonicity −2.50); his full top-10 includes
-      enough recent work that his mean shifts to +0.60, a 3-point swing.
-      Nikesh Shukla's top-100 picks look strongly female-coded (+2.50);
-      his full top-10 is essentially gender-neutral (−0.05). These shifts
-      suggest that the picks which <em>aggregate</em> to the top 100 don't
-      always reflect each voter's full reading personality — the consensus
-      filter has its own bias toward female-coded literary fiction at the
-      "officially approved" end and male-coded modernism at the
-      "officially serious" end, with each voter's idiosyncrasies thinning
-      out under aggregation.</p>
 
       <p class="methodology-link">
         For a frank discussion of how the codings were done, the

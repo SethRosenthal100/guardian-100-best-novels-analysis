@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Methodology & coding notes — Guardian's 100 best novels: gendered trends</title>
+  <title>Methodology & coding notes — Guardian's 100 best novels</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,25 +13,141 @@
       <a class="back-link essay-back" href="index.html">&larr; back to the chart</a>
       <h1>Methodology &amp; coding notes</h1>
       <p class="subtitle">
-        How the data was assembled, what the codings mean, and where
-        the judgment calls live.
+        How the data was assembled, how the clusters were computed, what
+        the codings mean, and where the judgment calls live.
       </p>
     </header>
 
     <section class="about">
       <div class="about-content">
 
-        <h2>Methodology</h2>
+        <h2>Data source and reproducibility</h2>
 
         <p>The dataset comes from parsing the embedded JavaScript in the
-        Guardian's interactive feature page (May 2026). Every voter's full
-        ranked top-10 is in that source, including books that didn't make
-        the top 100. The parser extracts (voter, book, rank, position,
-        commentary) tuples and pivots them into structured CSVs. The full
-        pipeline — build scripts, analysis code, interactive site — is in
-        <a href="https://github.com/SethRosenthal100/guardian-100-best-novels-analysis">the project's git repo</a>.</p>
+        Guardian&rsquo;s interactive feature page (May 2026). Every voter&rsquo;s
+        full ranked top-10 is in that source, including books that didn&rsquo;t
+        make the top 100. The parser extracts (voter, book, rank, position,
+        commentary) tuples and pivots them into structured CSVs.</p>
 
-        <h3>Voter gender research</h3>
+        <p>The full pipeline — extraction, coding, cluster computation,
+        layout, the live site — is in
+        <a href="https://github.com/SethRosenthal100/guardian-100-best-novels-analysis">the project&rsquo;s git repo</a>.
+        Cloning the repo and running
+        <code>python3 build_extended_data.py</code> regenerates
+        <code>docs/data_extended.json</code>, the single file the live
+        site loads. Cluster assignments, network layout positions, and
+        all rankings are deterministic (fixed random seed), so anyone
+        rerunning the script gets exactly the results shown here.</p>
+
+        <h2>How the book clusters are computed</h2>
+
+        <p>The clusters in the <strong>Book Clusters</strong> graph emerge
+        from voter co-picking. For every pair of books in the dataset,
+        the script computes the <em>Jaccard voter-overlap</em> — the
+        number of voters who picked both books divided by the number who
+        picked either. Book pairs with a Jaccard overlap below 0.15 get
+        no edge; pairs above that threshold get an edge weighted by the
+        Jaccard value. Jaccard, rather than raw shared-voter count, is
+        what keeps high-vote books from dominating the geometry — a
+        widely-picked book and a narrowly-picked book can share a few
+        voters and still have a low Jaccard because their total reaches
+        are very different.</p>
+
+        <p>On the resulting graph (663 books with at least one qualifying
+        edge, 2,590 edges total),
+        <code>networkx.community.greedy_modularity_communities</code>
+        finds 22 dense subgraphs at <code>resolution=0.5</code>. These
+        are the clusters. Their numerical IDs are stable across runs;
+        their <em>literary</em> meaning is up for the reader&rsquo;s
+        interpretation.</p>
+
+        <p>Layout is a force-directed spring layout
+        (<code>networkx.spring_layout</code>) with within-community edge
+        weights boosted 3&times; before solving. That boost is what pulls
+        each cluster into a visually tight blob while letting different
+        clusters drift apart. Spring constant <code>k=2.5</code>, seed
+        <code>7</code>. In the chart, each book is drawn at its baked
+        layout position with a circle whose area is linear in vote count
+        (<code>area = 80 + 30 &times; votes</code>), so the total visual
+        area of a cluster is roughly proportional to the cluster&rsquo;s
+        total votes.</p>
+
+        <h3>Orphans</h3>
+
+        <p>Nine of the top-100 books didn&rsquo;t connect to any other
+        book through the 0.15 Jaccard threshold. Their voters&rsquo;
+        other picks are too diffuse to cluster with anyone else&rsquo;s.
+        These are the <strong>orphans</strong> — they appear as a
+        separate pseudo-cluster at the top-right of the chart. They
+        aren&rsquo;t a &ldquo;cluster&rdquo; in the modularity sense;
+        they&rsquo;re highlighted as a group only because their
+        non-clustering is itself a finding. (22 non-top-100 books are
+        similarly isolated; the site doesn&rsquo;t surface those.)</p>
+
+        <h2>How the voter donut works</h2>
+
+        <p>Each of the 172 voters becomes a radial spoke in the
+        <strong>Voter Clusters</strong> donut. Each spoke is 10 segments
+        — one per pick. The segments within a spoke are sorted so the
+        cluster the voter cast the most votes for sits at the inner
+        edge (the <strong>anchor cluster</strong>); next most-common
+        goes outward from there; picks whose book isn&rsquo;t in the
+        cluster graph at all become gray and stack at the outer edge.</p>
+
+        <p>Around the ring, voters are ordered clockwise from 12 o&rsquo;clock
+        by their <em>number of distinct clusters</em> (ascending), with
+        the dominant cluster&rsquo;s count as a tiebreak. So the top of
+        the ring is the most-concentrated voters (one or two clusters);
+        going clockwise gets you progressively more scattered ballots.</p>
+
+        <p>In <em>Top 100</em> scope, the same logic runs but picks whose
+        book isn&rsquo;t in the Guardian&rsquo;s top 100 are treated as
+        gray. Voters whose entire ballot missed the cut become fully-gray
+        spokes and sort to the very end of the sweep.</p>
+
+        <p>The paired-circles legend on the right shows, for the top-5
+        clusters by total votes, the number of books vs the total votes
+        for each cluster — same scale on both columns. The asymmetry
+        between book count and vote count in any given row is what
+        makes a cluster &ldquo;dense&rdquo; (small but heavily-voted) or
+        &ldquo;sprawling&rdquo; (many books, fewer votes apiece).</p>
+
+        <h2>Voter rankings</h2>
+
+        <p>The <strong>Rankings</strong> tab in the side panel surfaces
+        six cluster-shaped rankings of voters. Each is computed per-mode
+        (Top 100 / All) and shows the top five voters in that category:</p>
+
+        <ul>
+          <li><strong>Most cluster-diverse</strong> — most distinct
+          clusters touched across the 10 picks.</li>
+          <li><strong>Anchored in the &lsquo;canon&rsquo;</strong> — most
+          picks in the cluster with the highest votes-per-book (the dense
+          most-voted cluster &mdash; informally &ldquo;the canon&rdquo;).</li>
+          <li><strong>Anchored in a niche cluster</strong> — dominant
+          cluster is one of the smallest in the network.</li>
+          <li><strong>Picks popular books</strong> — highest sum of
+          vote-counts across their picks.</li>
+          <li><strong>Picks obscure books</strong> — lowest sum of
+          vote-counts across their picks.</li>
+          <li><strong>Most off-grid</strong> — most picks that don&rsquo;t
+          fall in any cluster (or, in Top 100 scope, missed the cut).</li>
+        </ul>
+
+        <p>Two further rankings (&ldquo;most cluster-loyal&rdquo; and
+        &ldquo;bridges two clusters&rdquo;) are computed by the build
+        script but not surfaced on the live page — they leaned hardest
+        on cluster <em>meaning</em>, which is loose for the long-tail
+        clusters dominated by 1&ndash;2 vote books.</p>
+
+        <p>A separate <strong>&ldquo;against the gender pattern&rdquo;</strong>
+        block lists the female voters whose ballots deviate furthest
+        from the female-voter mean subject score, and the male voters
+        whose ballots deviate furthest from the male-voter mean. This
+        one is gender-axis-specific; it lives in the same Rankings
+        side-panel below the cluster rankings.</p>
+
+        <h2>Voter gender research</h2>
 
         <p>Each of the 172 voters is coded for gender — F, M, NB, or
         unknown. The coding was done in two passes. The first pass drew
@@ -100,8 +216,8 @@
         </ul>
 
         <p>Authors are also coded for gender, separately from voters.
-        479 distinct authors across the dataset are coded (75 for the
-        top 100; 404 for the additional authors that appear only in
+        476 distinct authors across the dataset are coded (75 for the
+        top 100; 401 for the additional authors that appear only in
         long-tail picks). Authors who use pen names (George Eliot,
         George Orwell, Elena Ferrante) are coded as the gender the
         author publicly identified as.</p>
@@ -122,19 +238,49 @@
         total ballots:</p>
 
         <ul>
-          <li>"27% of male voters' ballots go to female authors" has
-          all male-voter ballots in the denominator (684 ballots).</li>
-          <li>"49% of female voters' ballots go to male authors" has
-          all female-voter ballots in the denominator (1,003 ballots).</li>
+          <li>&ldquo;27% of male voters&rsquo; ballots go to female
+          authors&rdquo; has male-voter picks where the book&rsquo;s
+          author is coded F or M in the denominator (684 picks). Picks
+          with an NB-coded or unknown author, and picks that didn&rsquo;t
+          resolve to a book in the dataset, are excluded.</li>
+          <li>&ldquo;49% of female voters&rsquo; ballots go to male
+          authors&rdquo; has female-voter picks where the author is F
+          or M in the denominator (1,003 picks).</li>
         </ul>
 
-        <p>The two stats describe each gender's cross-the-line voting
-        behaviour independently. Adding them together (27% + 49% = 76%)
-        is not meaningful — they're different bases. Within each voter
-        gender the complements <em>do</em> sum to 100% as expected
-        (male voters: 27% to F authors + 73% to M authors = 100%;
-        female voters: 49% to M authors + 51% to F authors = 100%).
-        The same logic applies to the two subject-coded statistics.</p>
+        <p>The two stats describe each gender&rsquo;s cross-the-line
+        voting behaviour independently. Adding them together
+        (27% + 49% = 76%) is not meaningful — they&rsquo;re different
+        bases. Within each voter gender the complements <em>do</em>
+        sum to 100% as expected (male voters: 27% to F authors + 73%
+        to M authors = 100%; female voters: 49% to M authors + 51% to
+        F authors = 100%).</p>
+
+        <p>The two subject-coded statistics (33% and 43%) work
+        analogously, but the denominator restriction is tighter. They
+        count only picks where the book has a <em>directional</em>
+        subject code — male-coded (subject &lt; 0) or female-coded
+        (subject &gt; 0). Books coded as neutral (subject = 0), and
+        books with no subject code at all, are excluded from both
+        numerator and denominator. The denominators come out to:</p>
+
+        <ul>
+          <li>&ldquo;33% of male voters&rsquo; ballots go to
+          female-coded books&rdquo;: 614 male-voter picks with a
+          directional subject code (out of 690 male-voter picks
+          total).</li>
+          <li>&ldquo;43% of female voters&rsquo; ballots go to
+          male-coded books&rdquo;: 929 female-voter picks (out of
+          1,010).</li>
+        </ul>
+
+        <p>Computed on <em>all</em> male-voter picks (including
+        neutrals and uncoded), the F-coded share would be 29% rather
+        than 33%; computed on all female-voter picks, the M-coded
+        share would be 40% rather than 43%. The site reports the
+        restricted-denominator versions because they preserve the
+        parallel-asymmetry framing (the F-coded and M-coded shares
+        within the coded universe sum to 100%).</p>
 
         <h2>Coding assumptions and limitations</h2>
 
@@ -189,12 +335,12 @@
         <p><strong>The long-tail subject coding was done by a research
         agent</strong> working from plot summaries and brief author
         research — not as carefully as the top-100 codings, which were
-        hand-done with individual rationale per book. Coding consistency
-        across the long tail is therefore weaker than within the top 100.
-        For the <em>headline patterns</em> this matters less (the signal
-        at the top of the list dominates), but for any individual
-        long-tail book, the score should be taken as approximate rather
-        than precise.</p>
+        done with individual rationale per book and reviewed at the
+        book level. Coding consistency across the long tail is therefore
+        weaker than within the top 100. For the <em>headline patterns</em>
+        this matters less (the signal at the top of the list dominates),
+        but for any individual long-tail book, the score should be taken
+        as approximate rather than precise.</p>
 
         <p><strong>Author gender for the 404 new authors was also
         agent-coded.</strong> Famous and confidently-known authors are

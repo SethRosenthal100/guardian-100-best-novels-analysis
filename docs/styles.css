@@ -59,6 +59,57 @@ h1 {
   line-height: 1.45;
 }
 
+/* Intro section directly under the title, above the tab strip */
+.page-intro {
+  margin: 8px 0 18px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.page-intro p { margin: 0 0 8px; }
+.page-intro p:last-child { margin-bottom: 0; }
+
+/* Tab strip */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--grid);
+  margin: 0 0 22px;
+}
+.tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 10px 18px;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--mid);
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+.tab-btn:hover { color: var(--ink); }
+.tab-btn.active {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+  font-weight: 600;
+}
+
+/* Tab panels — only the active one is rendered. */
+.tab-panel { min-width: 0; }
+.tab-panel.hidden { display: none; }
+
+/* Per-tab explainer slot — sits between the tab strip and the chart. */
+.tab-explainer {
+  margin: 0 0 18px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.tab-explainer p { margin: 0 0 8px; }
+.tab-explainer p:last-child { margin-bottom: 0; }
+.tab-explainer .headline-stats { margin-bottom: 12px; }
+
 /* Two headline stats sitting between the subtitle and the controls.
    Quiet — plain text, no box, slightly emphasised numbers in colour. */
 .headline-stats {
@@ -141,15 +192,6 @@ h1 {
   cursor: pointer;
 }
 
-/* The 73% lede paragraph: framing question above the chart title */
-.chart-lede {
-  margin: 18px 0 14px;
-  font-size: 15px;
-  line-height: 1.55;
-  color: var(--ink);
-}
-.chart-lede p { margin: 0; }
-.chart-lede strong { font-weight: 700; }
 
 /* Lead-in between the controls and the chart itself */
 .chart-intro {
@@ -171,11 +213,187 @@ h1 {
 }
 .chart-intro-sub strong { color: var(--ink); font-weight: 600; }
 
-#chart {
+.chart {
   width: 100%;
   height: auto;
   display: block;
   user-select: none;
+}
+
+/* Cluster swatch & link (used in book panel + cluster panel headers) */
+.cluster-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  vertical-align: -1px;
+  margin-right: 6px;
+}
+.cluster-swatch-large {
+  width: 18px;
+  height: 18px;
+  vertical-align: -3px;
+  margin-right: 8px;
+}
+.cluster-link {
+  cursor: pointer;
+  color: var(--ink);
+  text-decoration: none;
+}
+.cluster-link:hover { text-decoration: underline; }
+.panel-cluster-row { margin-top: 4px; }
+
+/* Voter Clusters donut */
+.donut-spoke { transition: opacity 120ms; }
+.donut-spoke.dim { opacity: var(--dim-alpha); }
+.donut-spoke.focus path,
+.donut-spoke.highlight path {
+  stroke: #121212;
+  stroke-width: 0.6;
+}
+.donut-seg { stroke: none; }
+/* Colored (cluster-assigned) segments get a thin black border by default.
+   Gray segments (data-cluster="-1") stay borderless until the spoke is
+   focused/highlighted — see the `.donut-spoke.focus path` rule above. */
+.donut-seg:not([data-cluster="-1"]) {
+  stroke: #121212;
+  stroke-width: 0.4;
+}
+.donut-ring {
+  fill: none;
+  stroke: #888;
+  stroke-width: 0.6;
+}
+.donut-inner-arc {
+  fill: none;
+  stroke: #777;
+  stroke-width: 1.2;
+}
+.donut-inner-arrow {
+  fill: #777;
+  stroke: none;
+}
+.donut-inner-label {
+  font-size: 10.5px;
+  font-style: italic;
+  fill: #666;
+}
+.donut-call-line {
+  stroke: #555;
+  stroke-width: 0.5;
+  fill: none;
+}
+.donut-call-text { font-family: inherit; }
+.donut-call-name {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #121212;
+}
+.donut-call-sub {
+  font-size: 10.5px;
+  fill: #555;
+}
+.donut-callout:hover .donut-call-name { text-decoration: underline; }
+.donut-callout:hover .donut-call-line { stroke: #121212; stroke-width: 1; }
+
+.donut-legend-title {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #333;
+  letter-spacing: 0.02em;
+}
+.donut-legend-head {
+  font-size: 11px;
+  font-weight: 700;
+  fill: #555;
+}
+.donut-legend-circle {
+  stroke: #ffffff;
+  stroke-width: 0.8;
+  cursor: pointer;
+}
+.donut-legend-num {
+  font-size: 10px;
+  fill: #555;
+  font-weight: 700;
+}
+
+/* Book Clusters network */
+.net-edge {
+  stroke: #aaa;
+  stroke-opacity: 0.18;
+  stroke-width: 0.6;
+  pointer-events: none;
+}
+.net-edge-dim {
+  stroke-opacity: 0.06;
+}
+.net-node {
+  stroke: #ffffff;
+  stroke-width: 0.8;
+  cursor: pointer;
+  transition: opacity 120ms;
+}
+.net-node:hover {
+  stroke: #121212;
+  stroke-width: 1.4;
+}
+.net-node.out-of-scope {
+  stroke: none;
+  opacity: 0.55;
+  cursor: pointer;
+}
+.net-node.out-of-scope:hover {
+  opacity: 1;
+  stroke: #121212;
+  stroke-width: 1.2;
+}
+.net-node.dim { opacity: var(--dim-alpha); }
+.net-node.focus,
+.net-node.highlight {
+  stroke: #121212;
+  stroke-width: 1.4;
+}
+.net-label {
+  font-size: 10px;
+  font-family: inherit;
+  fill: #222;
+  pointer-events: none;
+  paint-order: stroke fill;
+  stroke: rgba(255, 255, 255, 0.78);
+  stroke-width: 3px;
+}
+
+/* Orphan row at bottom of Book Clusters chart */
+.net-orphan { /* inherits .net-node base */ }
+.net-orphan-caption {
+  font-size: 12px;
+  font-weight: 600;
+  fill: #5A5A5A;
+  letter-spacing: 0.02em;
+}
+.net-orphan-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  fill: #222;
+  pointer-events: none;
+  paint-order: stroke fill;
+  stroke: rgba(255, 255, 255, 0.85);
+  stroke-width: 3px;
+}
+.net-orphan-line {
+  stroke: #888;
+  stroke-width: 0.6;
+  fill: none;
+  pointer-events: none;
+}
+.net-orphan-boundary {
+  fill: none;
+  stroke: #a8a8a8;
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+  opacity: 0.55;
+  pointer-events: none;
 }
 
 .source {
@@ -578,90 +796,90 @@ a.search-result:focus-visible {
 .tooltip .tt-meta { color: #9c9c9c; font-size: 11.5px; margin-top: 3px; }
 
 /* Chart SVG styling */
-#chart .dot {
+.chart .dot {
   cursor: pointer;
   transition: opacity 120ms;
 }
-#chart .dot.dim { opacity: var(--dim-alpha); }
-#chart .dot.focus,
-#chart .dot.highlight { opacity: 1; }
-#chart .dot.focus { stroke: var(--ink); stroke-width: 2; }
+.chart .dot.dim { opacity: var(--dim-alpha); }
+.chart .dot.focus,
+.chart .dot.highlight { opacity: 1; }
+.chart .dot.focus { stroke: var(--ink); stroke-width: 2; }
 
-#chart .background-hit {
+.chart .background-hit {
   fill: transparent;
   cursor: default;
 }
 
-#chart text {
+.chart text {
   font-family: inherit;
   fill: var(--ink);
 }
-#chart .axis-label {
+.chart .axis-label {
   font-size: 14.5px;
   font-weight: 500;
   fill: var(--ink);
 }
-#chart .axis-sub {
+.chart .axis-sub {
   font-size: 12.5px;
   fill: #3a3a3a;
   font-style: italic;
 }
-#chart .axis-title {
+.chart .axis-title {
   font-size: 17px;
   font-weight: 700;
   fill: var(--ink);
 }
-#chart .y-tick {
+.chart .y-tick {
   font-size: 12px;
   fill: #2c2c2c;
 }
-#chart .ref-line {
+.chart .ref-line {
   stroke: var(--mid);
   stroke-width: 1;
   stroke-dasharray: 4 3;
   opacity: 0.6;
 }
-#chart .empty-region {
+.chart .empty-region {
   fill: var(--mid);
   opacity: 0.04;
 }
-#chart .empty-region-label {
+.chart .empty-region-label {
   font-size: 13px;
   fill: #2c2c2c;
   font-style: italic;
 }
 /* curves: highlighted group (teal/red) + the pooled "other" group (grey) */
-#chart .curve-highlighted { stroke: var(--red); fill: none; stroke-width: 2.4; }
-#chart .curve-other       { stroke: var(--mid); fill: none; stroke-width: 1.6; opacity: 0.7; }
-#chart .curve-label {
+.chart .curve-highlighted { stroke: var(--red); fill: none; stroke-width: 2.4; }
+.chart .curve-other       { stroke: var(--mid); fill: none; stroke-width: 1.6; opacity: 0.7; }
+.chart .curve-label {
   font-size: 13.5px;
   font-style: italic;
   font-weight: 500;
 }
-#chart .curve-label.hl     { fill: var(--red); }
-#chart .curve-label.other  { fill: #2c2c2c; }
+.chart .curve-label.hl     { fill: var(--red); }
+.chart .curve-label.other  { fill: #2c2c2c; }
 /* Near-miss dots: dashed border to distinguish */
-#chart .dot.near-miss { stroke-dasharray: 2 1.5; }
-#chart .baseline-text {
+.chart .dot.near-miss { stroke-dasharray: 2 1.5; }
+.chart .baseline-text {
   font-size: 13px;
   fill: #2c2c2c;
   font-style: italic;
 }
 
 /* Label badges for selected dots */
-#chart .label-bg {
+.chart .label-bg {
   fill: var(--bg);
   opacity: 0.92;
   rx: 2; ry: 2;
 }
-#chart .label-text {
+.chart .label-text {
   font-size: 13.5px;
   fill: var(--ink);
   font-style: italic;
 }
 /* Seed labels in the overview state: same shape, visually de-emphasised
    so they don't compete with the data when the user is exploring */
-#chart .label-muted .label-text {
+.chart .label-muted .label-text {
   fill: #444;
   font-size: 12.5px;
 }
