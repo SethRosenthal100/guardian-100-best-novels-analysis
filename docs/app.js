@@ -54,7 +54,7 @@
   // ---------------------------------------------------------------------
   // Data
   // ---------------------------------------------------------------------
-  const data = await fetch("data_extended.json").then((r) => r.json());
+  const data = await fetch("data_extended.json?v=1").then((r) => r.json());
   const booksByKey = new Map(data.books.map((b) => [b.key, b]));
   const votersById = new Map(data.voters.map((v) => [v.id, v]));
 
