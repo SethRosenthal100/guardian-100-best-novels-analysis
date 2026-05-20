@@ -35,3 +35,6 @@ raw/app.js
 # Exploratory analysis (supply normalization) — not part of the published analysis
 normalize_curves_compare.py
 out/normalize_curves_compare.png
+
+# Static chart-axis exploration sandbox
+out/chart_exploration/
